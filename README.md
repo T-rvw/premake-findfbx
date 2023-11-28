@@ -7,8 +7,10 @@ A premake add-on module helps to find the most suitable fbx sdk location to use.
 #### Tested Platforms
 
 * Windows
-  
-  
+
+Other platforms such as Mac, Linux is WIP.
+
+
 
 #### Motivation
 
@@ -28,33 +30,37 @@ Parse FBX ASCII file is also a solution to avoid sdk integration, such as [Godot
   find_fbxsdk = require("premake-findfbx")
   ```
 
-* Usages in one line
+* In module scope
   
   ```lua
-  -- In project scope
-  find_fbxsdk.run()
+  -- [Optional] config module options
+  find_fbxsdk.custom_sdk_directory = "D:/fbx"
+  find_fbxsdk.dump_information = true
+  
+  -- Check if module can find a valid sdk locatiion
+  local sdkLocation = find_fbxsdk.get_sdk_location()
+  local isValid = sdkLocation ~= nil and os.isdir(sdkLocation)
   ```
 
-* Usages with options
+* In project scope
   
   ```lua
-  -- In project scope
-  find_fbxsdk.run({ copy_shared_libs = true, dump_information = true, static_runtime = false })
+  -- Default options
+  find_fbxsdk.project_config()
+  
+  -- With options
+  -- find_fbxsdk.config_project({ static_runtime = false })
   ```
 
 Then it will generate includedirs, libdirs, links, postbuildcommands which copy fbxsdk shared libs to your project build target's output directory. 
 
 
 
-#### Options
+#### Module Options
 
-* copy_shared_libs 
-  * type : boolean
-  * default : true
-    * true : Copy shared libararies to your project build target's output directory.
-    * false : No Copy
 * custom_sdk_directory
   * type : string
+    * A valid abosulte directory path
   * default : nil
     * Search this path at first if not nil. Fallback to search system installed directories.
 * dump_information
@@ -62,6 +68,16 @@ Then it will generate includedirs, libdirs, links, postbuildcommands which copy 
   * default : true
     * true : Dump useful information such as include directories, link library paths for debug purpose.
     * false : No Dump
+
+
+
+#### Project Options
+
+* copy_shared_libs
+  * type : boolean
+  * default : true
+    * true : Copy shared libararies to your project build target's output directory.
+    * false : No Copy
 * static_runtime
   * type : boolean
   * default : true

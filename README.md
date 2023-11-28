@@ -7,14 +7,14 @@ A premake add-on module helps to find the most suitable fbx sdk location to use.
 #### Tested Platforms
 
 * Windows
-
-
+  
+  
 
 #### Motivation
 
 [Autodesk FBX](https://en.wikipedia.org/wiki/FBX) is an industry standard 3D model file format but [FBX SDK](https://aps.autodesk.com/developer/overview/fbx-sdk) is under a commericial license. Maybe not friendly to integrate sdk  to your project directly.
 
-Parse FBX ASCII file is a solution to avoid sdk integration, such as [FBX importer rewritten for Godot 3.2.4 and later (godotengine.org)](https://godotengine.org/article/fbx-importer-rewritten-for-godot-3-2-4/) and [nem0/OpenFBX: Lightweight open source FBX importer (github.com)](https://github.com/nem0/OpenFBX).
+Parse FBX ASCII file is also a solution to avoid sdk integration, such as [Godot FBX importer](https://godotengine.org/article/fbx-importer-rewritten-for-godot-3-2-4/) and [nem0/OpenFBX](https://github.com/nem0/OpenFBX). But it costs much time and efforts.
 
 
 
@@ -51,16 +51,16 @@ Then it will generate includedirs, libdirs, links, postbuildcommands which copy 
 * copy_shared_libs 
   * type : boolean
   * default : true
-    * true : Copy shared libararies to your project's location directory
+    * true : Copy shared libararies to your project build target's output directory.
     * false : No Copy
 * custom_sdk_directory
   * type : string
-  * default : ""
-    * Search this path at first. Fallback to search system installed directory.
+  * default : nil
+    * Search this path at first if not nil. Fallback to search system installed directories.
 * dump_information
   * type : boolean
   * default : true
-    * true : Dump useful information such as include directories, link library paths for debug purpose
+    * true : Dump useful information such as include directories, link library paths for debug purpose.
     * false : No Dump
 * static_runtime
   * type : boolean

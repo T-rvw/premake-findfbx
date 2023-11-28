@@ -23,7 +23,7 @@ ffs.get_sdk_location = function()
 	local mapAllSearchPaths = {}
 	local tabAllSearchPaths = {}
 	local custom_sdk_directory = ffs.custom_sdk_directory
-	if custom_sdk_directory ~= nil then
+	if custom_sdk_directory ~= nil and os.isdir(custom_sdk_directory) then
 		table.insert(tabAllSearchPaths, custom_sdk_directory)
 	end
 	
@@ -42,7 +42,9 @@ ffs.get_sdk_location = function()
 	
 	-- filter duplicated path.
 	for _, v in pairs(mapAllSearchPaths) do
-		table.insert(tabAllSearchPaths, v)
+		if os.isdir(v) then
+			table.insert(tabAllSearchPaths, v)
+		end
 	end
 	
 	local searchPathCount = #tabAllSearchPaths

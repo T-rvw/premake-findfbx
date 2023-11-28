@@ -1,55 +1,28 @@
 premake.modules.findfbxsdk = {}
 
 local ffs = premake.modules.findfbxsdk
+---------------------------------------------------------
+-- Module options
+--  custom_sdk_directory
+--  dump_information
+---------------------------------------------------------
+ffs.custom_sdk_directory = nil
+ffs.dump_information = false
 
--- options
--- copy_shared_libs
--- custom_sdk_directory
--- dump_information
--- static_runtime
-ffs.run = function(options)
-	-- Default options
-	local copy_shared_libs = true
-	local custom_sdk_directory = nil
-	local dump_information = true
-	local static_runtime = true
-	
-	local dumpInfo = function(msg)
-		if dump_information then
-			print("[Info][find-fbxsdk] : "..msg)
-		end
+local dumpInfo = function(msg)
+	if ffs.dump_information then
+		print("[Info][find-fbxsdk] : "..msg)
 	end
-	
-	local dumpError = function(msg)
-		print("[Error][find-fbxsdk] : "..msg)
-	end		
-	
-	if options ~= nil then
-		if type(options) ~= "table" then
-			dumpError("Input options variable type is not table.")
-			return
-		end
-		
-		-- Override default options
-		if options.copy_shared_libs ~= nil then
-			copy_shared_libs = options.copy_shared_libs
-		end
-		
-		if options.custom_sdk_directory ~= nil then
-			custom_sdk_directory = options.custom_sdk_directory
-		end
-		
-		if options.dump_information ~= nil then
-			dump_information = options.dump_information
-		end
-		
-		if options.static_runtime ~= nil then
-			static_runtime = options.static_runtime
-		end
-	end
+end
 
+local dumpError = function(msg)
+	print("[Error][find-fbxsdk] : "..msg)
+end
+
+ffs.get_sdk_location = function()
 	local mapAllSearchPaths = {}
 	local tabAllSearchPaths = {}
+	local custom_sdk_directory = ffs.custom_sdk_directory
 	if custom_sdk_directory ~= nil then
 		table.insert(tabAllSearchPaths, custom_sdk_directory)
 	end
@@ -78,10 +51,6 @@ ffs.run = function(options)
 		return
 	end
 	
-	local function getLastDirectoryName(sdkPath)
-		return path.getbasename(sdkPath)
-	end
-	
 	local finalSDKPath = nil
 	if searchPathCount == 1 then
 		finalSDKPath = tabAllSearchPaths[1]
@@ -91,7 +60,7 @@ ffs.run = function(options)
 			local function containsActionName(sdkPath)
 				local actionDirectoryPaths = os.matchdirs(sdkPath.."/lib/*")
 				for _, actionDirectoryPath in pairs(actionDirectoryPaths) do
-					if getLastDirectoryName(actionDirectoryPath) == _ACTION then
+					if path.getbasename(actionDirectoryPath) == _ACTION then
 						return true
 					end
 				end
@@ -103,8 +72,8 @@ ffs.run = function(options)
 			local bContainsAction = containsActionName(b)
 			if aContainsAction and bContainsAction then
 				-- all contains, select year
-				local versionA = getLastDirectoryName(a)
-				local versionB = getLastDirectoryName(b)
+				local versionA = path.getbasename(a)
+				local versionB = path.getbasename(b)
 				return versionA > versionB
 			end
 			
@@ -121,18 +90,56 @@ ffs.run = function(options)
 		end
 		finalSDKPath = tabAllSearchPaths[1]
 	end
+	
 	dumpInfo("FinalSDKPath = "..finalSDKPath)
+	
+	return finalSDKPath
+end
+
+---------------------------------------------------------
+-- Project options
+-- 	copy_shared_libs
+-- 	static_runtime
+---------------------------------------------------------
+ffs.project_config = function(options)
+	-- Default options
+	local copy_shared_libs = true
+	local static_runtime = true
+	
+	if options ~= nil then
+		if type(options) ~= "table" then
+			dumpError("Input options variable type is not table.")
+			return
+		end
+		
+		-- Override default options
+		if options.copy_shared_libs ~= nil then
+			copy_shared_libs = options.copy_shared_libs
+		end
+		
+		if options.static_runtime ~= nil then
+			static_runtime = options.static_runtime
+		end
+	end
+
+	local finalSDKPath = ffs.get_sdk_location()
+	if finalSDKPath == nil then
+		dumpError("Cannot find a suitable fbxsdk location.")
+		return
+	end
 	
 	local libDiretory = nil
 	local actionDirectoryPaths = os.matchdirs(finalSDKPath.."/lib/*")
 	for _, actionDirectoryPath in pairs(actionDirectoryPaths) do
-		if getLastDirectoryName(actionDirectoryPath) == _ACTION then
+		if path.getbasename(actionDirectoryPath) == _ACTION then
 			libDiretory = actionDirectoryPath
 			break
 		end
 	end
 	
 	if libDiretory == nil then
+		-- Cannot find a best match path. Get a random one.
+		-- TODO : maybe better to limit vs2022 should find vs** series, not to find other build targets.
 		for _, actionDirectoryPath in pairs(actionDirectoryPaths) do
 			libDiretory = actionDirectoryPath
 			break

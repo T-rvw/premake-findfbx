@@ -34,12 +34,17 @@ Parse FBX ASCII file is also a solution to avoid sdk integration, such as [Godot
   
   ```lua
   -- [Optional] config module options
-  find_fbxsdk.custom_sdk_directory = "D:/fbx"
   find_fbxsdk.dump_information = true
   
   -- Check if module can find a valid sdk locatiion
   local sdkLocation = find_fbxsdk.get_sdk_location()
   local isValid = sdkLocation ~= nil and os.isdir(sdkLocation)
+  ```
+  
+  Note that if you don't install fbxsdk in default location such as "C:\Program Files\Autodesk\FBX\FBX SDK\xxxx.x.x" in Windows.
+  You have to use custom_sdk_directory option.
+  ```lua
+  find_fbxsdk.custom_sdk_directory = "D:/fbx"
   ```
 
 * In project scope
@@ -52,7 +57,7 @@ Parse FBX ASCII file is also a solution to avoid sdk integration, such as [Godot
   -- find_fbxsdk.config_project({ static_runtime = false })
   ```
 
-Then it will generate includedirs, libdirs, links, postbuildcommands which copy fbxsdk shared libs to your project build target's output directory. 
+Then it will generate includedirs, libdirs, links, postbuildcommands which copy fbxsdk shared libs to your project build target's output directory.
 
 
 

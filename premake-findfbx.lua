@@ -29,15 +29,15 @@ ffs.get_sdk_location = function()
 	
 	local fbxSDKChildPaths = "/Autodesk/FBX/FBX SDK/*"
 	local addToSDKSearchPaths = function(parentDirectory)
-		parentDirectory = string.gsub(parentDirectory, "\\", "/")
+		parentDirectory = path.normalize(parentDirectory)
 		local versionDirectoryPaths = os.matchdirs(parentDirectory)
 		for _, versionDirectory in pairs(versionDirectoryPaths) do
 			mapAllSearchPaths[versionDirectory] = versionDirectory
 		end
 	end
 	
-	addToSDKSearchPaths(string.gsub(os.getenv("ProgramW6432"), "\\", "/")..fbxSDKChildPaths)
-	addToSDKSearchPaths(string.gsub(os.getenv("PROGRAMFILES"), "\\", "/")..fbxSDKChildPaths)
+	addToSDKSearchPaths(path.normalize(os.getenv("ProgramW6432"))..fbxSDKChildPaths)
+	addToSDKSearchPaths(path.normalize(os.getenv("PROGRAMFILES"))..fbxSDKChildPaths)
 	addToSDKSearchPaths("/Applications"..fbxSDKChildPaths)
 	
 	-- filter duplicated path.

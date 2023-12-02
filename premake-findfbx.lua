@@ -15,6 +15,10 @@ local dumpInfo = function(msg)
 	end
 end
 
+local dumpWarning = function(msg)
+	print("[Warning][find-fbxsdk] : "..msg)
+end
+
 local dumpError = function(msg)
 	print("[Error][find-fbxsdk] : "..msg)
 end
@@ -56,7 +60,7 @@ ffs.get_sdk_location = function()
 	
 	local searchPathCount = #tabAllSearchPaths
 	if searchPathCount == 0 then
-		dumpError("Cannot find a possible fbxsdk path. Try to use custom_sdk_directory option or install fbxsdk from https://aps.autodesk.com/developer/overview/fbx-sdk .")
+		dumpWarning("Cannot find a possible fbxsdk path so fbx features will be skiped. Try to use custom_sdk_directory option or install fbxsdk from https://aps.autodesk.com/developer/overview/fbx-sdk .")
 		return
 	end
 	

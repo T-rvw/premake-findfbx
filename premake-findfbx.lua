@@ -36,8 +36,15 @@ ffs.get_sdk_location = function()
 		end
 	end
 	
-	addToSDKSearchPaths(path.normalize(os.getenv("ProgramW6432"))..fbxSDKChildPaths)
-	addToSDKSearchPaths(path.normalize(os.getenv("PROGRAMFILES"))..fbxSDKChildPaths)
+	local addEnvPathToSDKSearchPaths = function(env)
+		local envPath = os.getenv(env)
+		if envPath ~= nil then
+			addToSDKSearchPaths(path.normalize(envPath)..fbxSDKChildPaths)
+		end
+	end
+	
+	addEnvPathToSDKSearchPaths("ProgramW6432")
+	addEnvPathToSDKSearchPaths("PROGRAMFILES")
 	addToSDKSearchPaths("/Applications"..fbxSDKChildPaths)
 	
 	-- filter duplicated path.

@@ -8,7 +8,7 @@ A premake add-on module helps to find the most suitable fbx sdk location to use.
 
 * Windows
 
-Other platforms such as Mac, Linux is WIP.
+Currently, you can reference CI status in project [CatDogEngine/AssetPipeline](https://github.com/CatDogEngine/AssetPipeline).
 
 
 
